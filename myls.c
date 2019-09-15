@@ -1,6 +1,25 @@
+#include <getopt.h>
+#include <stdio.h>
+#include <stdlib.h>
+
 int main(int argc, char *argv[]){
 
 	/* check arguments */
+	int option;
+	while ((option=getopt(argc, argv, "al")) != -1){
+		switch (option) {
+			case 'a':
+				printf("option a\n");
+				/* include hidden files */
+				break;
+			case 'l':
+				printf("option l\n");
+				/* include extra info */
+				break;
+			default:
+				break;
+		}
+	}
 
 	/* if no arguments, list files in curent directory */
 		/* open current directory */
