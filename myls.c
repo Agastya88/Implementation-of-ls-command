@@ -1,37 +1,41 @@
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <dirent.h>
 
 int main(int argc, char *argv[]){
+    //DIR directory;
+    int aflag = 0;
+    int lflag = 0;
 
-	/* check arguments */
-	int option;
-	while ((option=getopt(argc, argv, "al")) != -1){
-		switch (option) {
-			case 'a':
-				printf("option a\n");
-				/* include hidden files */
-				break;
-			case 'l':
-				printf("option l\n");
-				/* include extra info */
-				break;
-			default:
-				break;
-		}
-	}
+    /* check arguments */
+    int option;
+    while ((option=getopt(argc, argv, "al")) != -1){
+        switch (option) {
+            case 'a':
+                printf("option a\n");
+                aflag = 1;
+                break;
+            case 'l':
+                printf("option l\n");
+                lflag = 1;
+                break;
+            default:
+                break;
+        }
+    }
 
-	/* if no arguments, list files in curent directory */
-		/* open current directory */
-		/* print out names of files */
+    /* if no arguments, list files in curent directory */
+        /* open current directory */
+        /* print out names of files */
 
-	/* otherwise, parse arguments */
+    /* otherwise, parse arguments */
 
-	/* given -a, include hidden files */
+    /* given -a, include hidden files */
 
-	/* given -l, include extra info */
+    /* given -l, include extra info */
 
-	/* given directory name, list items in directory */
+    /* given directory name, list items in directory */
 
-	/* given file name, output file name */
+    /* given file name, output file name */
 }
