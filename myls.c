@@ -32,8 +32,17 @@ int main(int argc, char *argv[]){
       directory = opendir (".");
     }
 
+    char *filename;
     while ((entry = readdir(directory))!=NULL){
-      printf("%s\n", entry->d_name);
+      filename=entry->d_name;
+      if (filename[0]=='.'){
+        if (aflag==1){
+          printf("%s\n", filename);
+        }
+      }
+      else{
+        printf("%s\n", filename);
+      }
     }
 
     /* if no arguments, list files in curent directory */
