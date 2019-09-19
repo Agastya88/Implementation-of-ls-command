@@ -23,6 +23,8 @@ int main(int argc, char *argv[]){
             default:
                 break;
         }
+        printf(argv[1]);
+        printf ("\n");
     }
 
     /* if no arguments, list files in curent directory */
