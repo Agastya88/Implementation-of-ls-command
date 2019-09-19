@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <dirent.h>
 
-
 int main(int argc, char *argv[]){
     DIR *directory;
+    struct dirent *entry;
     int aflag = 0;
     int lflag = 0;
 
@@ -30,7 +30,10 @@ int main(int argc, char *argv[]){
       printf(argv[optind]);
     } else{
       directory = opendir (".");
+    }
 
+    while ((entry = readdir(directory))!=NULL){
+      printf("%s\n", entry->d_name);
     }
 
     /* if no arguments, list files in curent directory */
