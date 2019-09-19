@@ -3,8 +3,9 @@
 #include <stdlib.h>
 #include <dirent.h>
 
+
 int main(int argc, char *argv[]){
-    //DIR directory;
+    DIR *directory;
     int aflag = 0;
     int lflag = 0;
 
@@ -23,8 +24,13 @@ int main(int argc, char *argv[]){
             default:
                 break;
         }
-        printf(argv[1]);
-        printf ("\n");
+    }
+
+    if (optind < argc){
+      printf(argv[optind]);
+    } else{
+      directory = opendir (".");
+
     }
 
     /* if no arguments, list files in curent directory */
