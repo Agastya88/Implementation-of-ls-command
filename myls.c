@@ -14,11 +14,9 @@ int main(int argc, char *argv[]){
     while ((option=getopt(argc, argv, "al")) != -1){
         switch (option) {
             case 'a':
-                printf("option a\n");
                 aflag = 1;
                 break;
             case 'l':
-                printf("option l\n");
                 lflag = 1;
                 break;
             default:
@@ -27,31 +25,23 @@ int main(int argc, char *argv[]){
     }
 
     if (optind < argc){
-      printf(argv[optind]);
+        directory = opendir(argv[optind]);
     } else{
-      directory = opendir (".");
+        directory = opendir (".");
     }
 
     char *filename;
     while ((entry = readdir(directory))!=NULL){
-      filename=entry->d_name;
-      if (filename[0]=='.'){
-        if (aflag==1){
-          printf("%s\n", filename);
+        filename=entry->d_name;
+        if (filename[0]=='.'){
+            if (aflag==1){
+                printf("%s\n", filename);
+            }
         }
-      }
-      else{
-        printf("%s\n", filename);
-      }
+        else{
+            printf("%s\n", filename);
+        }
     }
-
-    /* if no arguments, list files in curent directory */
-        /* open current directory */
-        /* print out names of files */
-
-    /* otherwise, parse arguments */
-
-    /* given -a, include hidden files */
 
     /* given -l, include extra info */
 
