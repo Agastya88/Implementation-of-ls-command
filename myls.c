@@ -60,7 +60,20 @@ int main(int argc, char *argv[]){
             if (aflag == 0 && filename[0]=='.'){
                 continue;
             }
+
             stat(entry->d_name, &statbuf);
+
+            printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
+            printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
+            printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
+            printf( (statbuf.st_mode & S_IXUSR) ? "x" : "-");
+            printf( (statbuf.st_mode & S_IRGRP) ? "r" : "-");
+            printf( (statbuf.st_mode & S_IWGRP) ? "w" : "-");
+            printf( (statbuf.st_mode & S_IXGRP) ? "x" : "-");
+            printf( (statbuf.st_mode & S_IROTH) ? "r" : "-");
+            printf( (statbuf.st_mode & S_IWOTH) ? "w" : "-");
+            printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
+
             //printf("%10.10s", statbuf.st_mode&0777);
             printf("%4lu", statbuf.st_nlink);
             if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
