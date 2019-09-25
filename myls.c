@@ -62,7 +62,7 @@ int main(int argc, char *argv[]){
             }
             stat(entry->d_name, &statbuf);
             //printf("%10.10s", statbuf.st_mode&0777);
-            printf("%4d", statbuf.st_nlink);
+            printf("%4lu", statbuf.st_nlink);
             if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
                 printf(" %-6.8s", pwd->pw_name);
             }
