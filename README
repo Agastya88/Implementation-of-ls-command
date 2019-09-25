@@ -1,0 +1,8 @@
+myls - by sammy and agastya
+
+Known bugs
+==========
+currently the -a flag has not been implemented
+such that it works with -l.  For now -l will
+list the long form for all files regardless
+of whether or not they are hidden.
