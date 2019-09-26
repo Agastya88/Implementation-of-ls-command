@@ -1,4 +1,3 @@
-byelamolampa
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,7 +9,7 @@ byelamolampa
 #include <time.h>
 #include <locale.h>
 #include <stdint.h>
-#include <langinfo.h>
+#include <langinfo.h>q
 
 int main(int argc, char *argv[]){
     DIR *directory;
@@ -23,6 +22,7 @@ int main(int argc, char *argv[]){
     struct tm *tm;
     char datestring[256];
 
+    /* check arguments */
     int option;
     while ((option=getopt(argc, argv, "al")) != -1){
         switch (option) {
@@ -63,7 +63,6 @@ int main(int argc, char *argv[]){
 
             stat(entry->d_name, &statbuf);
 
-            /* permissions bitmask */
             printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
             printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
             printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
@@ -75,18 +74,24 @@ int main(int argc, char *argv[]){
             printf( (statbuf.st_mode & S_IWOTH) ? "w" : "-");
             printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
 
+            //printf("%10.10s", statbuf.st_mode&0777);
             printf("%4lu", statbuf.st_nlink);
             if ((pwd = getpwuid(statbgit uf.st_uid)) != NULL){
                 printf(" %-6.8s", pwd->pw_name);
             }
             if ((grp = getgrgid(statbuf.st_gid)) != NULL){
                 printf(" %-6.8s", grp->gr_name);
-            }
+
             printf(" %9jd", (intmax_t)statbuf.st_size);
+            //printf("  %s\n", filename);
             tm = localtime(&statbuf.st_mtime);
             strftime(datestring, sizeof(datestring), nl_langinfo(D_T_FMT),
                     tm);
             printf(" %s %s\n", datestring, entry->d_name);
         }
     }
+
+    /* given directory name, list items in directory */
+
+    /* given file name, output file name */
 }
