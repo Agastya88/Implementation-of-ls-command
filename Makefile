@@ -1,4 +1,4 @@
-CFLAGS=-Wall -pedantic
+CFLAGS=-g -Wall -pedantic
 
 myls: myls.c
 	gcc $(CFLAGS) -o myls myls.c
