@@ -9,7 +9,7 @@
 #include <time.h>
 #include <locale.h>
 #include <stdint.h>
-#include <langinfo.h>q
+#include <langinfo.h>
 
 int main(int argc, char *argv[]){
     DIR *directory;
@@ -80,7 +80,7 @@ int main(int argc, char *argv[]){
             printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
 
             printf("%4lu", statbuf.st_nlink);
-            if ((pwd = getpwuid(statbgit uf.st_uid)) != NULL){
+            if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
                 printf(" %-6.8s", pwd->pw_name);
             }
             if ((grp = getgrgid(statbuf.st_gid)) != NULL){
@@ -96,4 +96,5 @@ int main(int argc, char *argv[]){
             printf(" %s %s\n", datestring, entry->d_name);
         }
     }
+  }
 }
