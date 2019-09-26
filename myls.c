@@ -22,7 +22,6 @@ int main(int argc, char *argv[]){
     struct tm *tm;
     char datestring[256];
 
-    /* check arguments */
     int option;
     while ((option=getopt(argc, argv, "al")) != -1){
         switch (option) {
@@ -63,6 +62,7 @@ int main(int argc, char *argv[]){
 
             stat(entry->d_name, &statbuf);
 
+            /* permissions bitmask */
             printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
             printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
             printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
@@ -74,7 +74,6 @@ int main(int argc, char *argv[]){
             printf( (statbuf.st_mode & S_IWOTH) ? "w" : "-");
             printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
 
-            //printf("%10.10s", statbuf.st_mode&0777);
             printf("%4lu", statbuf.st_nlink);
             if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
                 printf(" %-6.8s", pwd->pw_name);
@@ -83,7 +82,6 @@ int main(int argc, char *argv[]){
                 printf(" %-6.8s", grp->gr_name);
             }
             printf(" %9jd", (intmax_t)statbuf.st_size);
-            //printf("  %s\n", filename);
             tm = localtime(&statbuf.st_mtime);
             strftime(datestring, sizeof(datestring), nl_langinfo(D_T_FMT),
                     tm);
