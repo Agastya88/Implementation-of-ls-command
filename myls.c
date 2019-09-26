@@ -1,3 +1,4 @@
+byelamolampa
 #include <getopt.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -76,7 +77,7 @@ int main(int argc, char *argv[]){
 
             //printf("%10.10s", statbuf.st_mode&0777);
             printf("%4lu", statbuf.st_nlink);
-            if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
+            if ((pwd = getpwuid(statbgit uf.st_uid)) != NULL){
                 printf(" %-6.8s", pwd->pw_name);
             }
             if ((grp = getgrgid(statbuf.st_gid)) != NULL){
