@@ -48,6 +48,7 @@ int main(int argc, char *argv[]){
     //TODO: fix segmentation fault when given file name
 
     char *filename;
+
     while ((entry = readdir(directory))!=NULL){
         filename=entry->d_name;
         if (lflag == 0){
@@ -68,6 +69,8 @@ int main(int argc, char *argv[]){
             stat(entry->d_name, &statbuf);
 
             /* permissions bitmask*/
+
+            printf(" %s %s\n", datestring, entry->d_name);
             printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
             printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
             printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
