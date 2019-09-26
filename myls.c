@@ -90,8 +90,4 @@ int main(int argc, char *argv[]){
             printf(" %s %s\n", datestring, entry->d_name);
         }
     }
-
-    /* given directory name, list items in directory */
-
-    /* given file name, output file name */
 }

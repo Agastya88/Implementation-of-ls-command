@@ -1,1 +1,5 @@
 myls - by sammy and agastya
+
+Known bugs
+==========
+does not work when given a file name as an option (segfault)
