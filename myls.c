@@ -88,10 +88,9 @@ int main(int argc, char *argv[]){
 
             printf(" %9jd", (intmax_t)statbuf.st_size);
             tm = localtime(&statbuf.st_mtime);
-            strftime(datestring, sizeof(datestring), nl_langinfo(D_T_FMT),
+            strftime(datestring, sizeof(datestring), "%b %d %H:%M",
                     tm);
 
-            //TODO: format time similar to ls
 
             printf(" %s %s\n", datestring, entry->d_name);
         }
