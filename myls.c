@@ -42,6 +42,11 @@ int main(int argc, char *argv[]){
         directory = opendir (".");
     }
 
+    //TODO: fix bug where it goes to the root of the file system when given a
+    // directory
+
+    //TODO: fix segmentation fault when given file name
+
     char *filename;
     while ((entry = readdir(directory))!=NULL){
         filename=entry->d_name;
@@ -85,6 +90,9 @@ int main(int argc, char *argv[]){
             tm = localtime(&statbuf.st_mtime);
             strftime(datestring, sizeof(datestring), nl_langinfo(D_T_FMT),
                     tm);
+
+            //TODO: format time similar to ls
+
             printf(" %s %s\n", datestring, entry->d_name);
         }
     }
