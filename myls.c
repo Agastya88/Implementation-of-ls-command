@@ -37,7 +37,6 @@ int main(int argc, char *argv[]){
     }
 
     if (optind < argc){
-        ()
         directory = opendir(argv[optind]);
     } else{
         directory = opendir (".");
@@ -51,27 +50,12 @@ int main(int argc, char *argv[]){
     char *filename;
 
     while ((entry = readdir(directory))!=NULL){
-        filename=entry->d_name;
-        if (lflag == 0){
-            if (filename[0]=='.'){
-                if (aflag==1){
-                    printf("%s\n", filename);
-                }
-            }
-            else{
-                printf("%s\n", filename);
-            }
+        stat(entry->d_name, &statbuf);
+        if (aflag == 0 && entry->d_name[0]=='.'){
+            continue;
         }
-        else{
-            if (aflag == 0 && filename[0]=='.'){
-                continue;
-            }
-
-            stat(entry->d_name, &statbuf);
-
+        if (lflag == 1){
             /* permissions bitmask*/
-
-            printf(" %s %s\n", datestring, entry->d_name);
             printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
             printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
             printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
@@ -89,15 +73,14 @@ int main(int argc, char *argv[]){
             }
             if ((grp = getgrgid(statbuf.st_gid)) != NULL){
                 printf(" %-6.8s", grp->gr_name);
+            }
 
             printf(" %9jd", (intmax_t)statbuf.st_size);
             tm = localtime(&statbuf.st_mtime);
             strftime(datestring, sizeof(datestring), "%b %d %H:%M",
                     tm);
 
-
-            printf(" %s %s\n", datestring, entry->d_name);
         }
+        printf(" %s %s\n", datestring, entry->d_name);
     }
-  }
 }
