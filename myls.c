@@ -16,6 +16,7 @@ int main(int argc, char *argv[]){
     struct dirent *entry;
     int aflag = 0;
     int lflag = 0;
+    int dirflag = 0;
     struct stat statbuf;
     struct passwd *pwd;
     struct group *grp;
@@ -40,6 +41,7 @@ int main(int argc, char *argv[]){
         directory = opendir(argv[optind]);
     } else{
         directory = opendir (".");
+        dirflag = 1;
     }
 
     //TODO: fix bug where it goes to the root of the file system when given a
@@ -48,6 +50,13 @@ int main(int argc, char *argv[]){
     //TODO: fix segmentation fault when given file name
 
     char *filename;
+
+    stat(argv[optind], &statbuf);
+
+    if (dirflag == 0 && !S_ISDIR(statbuf.st_mode)){
+        printf("%s\n", argv[optind]);
+        exit(0);
+    }
 
     while ((entry = readdir(directory))!=NULL){
         stat(entry->d_name, &statbuf);
