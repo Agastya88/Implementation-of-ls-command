@@ -44,8 +44,6 @@ int main(int argc, char *argv[]){
         dirflag = 1;
     }
 
-    stat(argv[optind], &statbuf);
-
     if (stat(argv[optind], &statbuf) == 0){
         if (!S_ISDIR(statbuf.st_mode) && dirflag == 0){
             printf("%s\n", argv[optind]);
