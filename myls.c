@@ -44,18 +44,15 @@ int main(int argc, char *argv[]){
         dirflag = 1;
     }
 
-    //TODO: fix bug where it goes to the root of the file system when given a
-    // directory
-
-    //TODO: fix segmentation fault when given file name
-
-    char *filename;
-
     stat(argv[optind], &statbuf);
 
-    if (dirflag == 0 && !S_ISDIR(statbuf.st_mode)){
-        printf("%s\n", argv[optind]);
-        exit(0);
+    if (stat(argv[optind], &statbuf) == 0){
+        if (!S_ISDIR(statbuf.st_mode) && dirflag == 0){
+            printf("%s\n", argv[optind]);
+            exit(0);
+        }
+    } else if (dirflag != 1){
+        exit (0);
     }
 
     while ((entry = readdir(directory))!=NULL){
