@@ -55,10 +55,10 @@ int main(int argc, char *argv[]){
 
     while ((entry = readdir(directory))!=NULL){
         stat(entry->d_name, &statbuf);
-        if (aflag == 0 && entry->d_name[0]=='.'){
+        if (!aflag && entry->d_name[0]=='.'){
             continue;
         }
-        if (lflag == 1){
+        if (lflag){
             /* permissions bitmask*/
             printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
             printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
