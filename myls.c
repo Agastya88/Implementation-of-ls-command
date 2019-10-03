@@ -87,4 +87,5 @@ int main(int argc, char *argv[]){
         }
         printf(" %s %s\n", datestring, entry->d_name);
     }
+    closedir(directory);
 }
