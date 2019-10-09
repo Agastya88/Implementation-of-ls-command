@@ -48,18 +48,18 @@ int main(int argc, char *argv[]){
     while (optind < argc || currentdirflag == 1){
         if (!currentdirflag){
             directory = opendir(argv[optind]);
-        }
-        if (stat(argv[optind], &statbuf) == 0){
-            if (!S_ISDIR(statbuf.st_mode) && currentdirflag == 0){
-                if (longOutput){
-                    longOut(statbuf);
+            if (stat(argv[optind], &statbuf) == 0){
+                if (!S_ISDIR(statbuf.st_mode) && currentdirflag == 0){
+                    if (longOutput){
+                        longOut(statbuf);
+                    }
+                    printf(" %s\n", argv[optind]);
+                    optind++;
+                    continue;
                 }
-                printf(" %s\n", argv[optind]);
-                optind++;
-                continue;
+            } else if (currentdirflag != 1){
+                exit (0);
             }
-        } else if (currentdirflag != 1){
-            exit (0);
         }
 
         while ((entry = readdir(directory))!=NULL){
