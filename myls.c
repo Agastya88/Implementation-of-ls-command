@@ -19,9 +19,9 @@ int main(int argc, char *argv[]){
     struct dirent *entry;
     int includeHidden = 0;
     int longOutput = 0;
-    int dirflag = 0;
+    int currentdirflag = 0;
     struct stat statbuf;
-    
+
     int option;
     while ((option=getopt(argc, argv, "al")) != -1){
         switch (option) {
@@ -42,30 +42,38 @@ int main(int argc, char *argv[]){
         directory = opendir(argv[optind]);
     } else{
         directory = opendir(".");
-        dirflag = 1;
+        currentdirflag = 1;
     }
 
-    if (stat(argv[optind], &statbuf) == 0){
-        if (!S_ISDIR(statbuf.st_mode) && dirflag == 0){
+    while (optind < argc || currentdirflag == 1){
+        if (!currentdirflag){
+            directory = opendir(argv[optind]);
+        }
+        if (stat(argv[optind], &statbuf) == 0){
+            if (!S_ISDIR(statbuf.st_mode) && currentdirflag == 0){
+                if (longOutput){
+                    longOut(statbuf);
+                }
+                printf(" %s\n", argv[optind]);
+                optind++;
+                continue;
+            }
+        } else if (currentdirflag != 1){
+            exit (0);
+        }
+
+        while ((entry = readdir(directory))!=NULL){
+            stat(entry->d_name, &statbuf);
+            if (!includeHidden && entry->d_name[0]=='.'){
+                continue;
+            }
             if (longOutput){
                 longOut(statbuf);
             }
-            printf(" %s\n", argv[optind]);
-            exit(0);
+            printf(" %s\n", entry->d_name);
         }
-    } else if (dirflag != 1){
-        exit (0);
-    }
-
-    while ((entry = readdir(directory))!=NULL){
-        stat(entry->d_name, &statbuf);
-        if (!includeHidden && entry->d_name[0]=='.'){
-            continue;
-        }
-        if (longOutput){
-            longOut(statbuf);
-        }
-        printf(" %s\n", entry->d_name);
+        currentdirflag = 0;
+        optind++;
     }
     closedir(directory);
 }
