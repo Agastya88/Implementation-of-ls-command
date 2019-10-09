@@ -11,26 +11,25 @@
 #include <stdint.h>
 #include <langinfo.h>
 
+//TODO choose better names for longoutput flag and function
+int longOut(struct stat);
+
 int main(int argc, char *argv[]){
     DIR *directory;
     struct dirent *entry;
-    int aflag = 0;
-    int lflag = 0;
+    int includeHidden = 0;
+    int longOutput = 0;
     int dirflag = 0;
     struct stat statbuf;
-    struct passwd *pwd;
-    struct group *grp;
-    struct tm *tm;
-    char datestring[256];
-
+    
     int option;
     while ((option=getopt(argc, argv, "al")) != -1){
         switch (option) {
             case 'a':
-                aflag = 1;
+                includeHidden = 1;
                 break;
             case 'l':
-                lflag = 1;
+                longOutput = 1;
                 break;
             default:
                 break;
@@ -55,37 +54,46 @@ int main(int argc, char *argv[]){
 
     while ((entry = readdir(directory))!=NULL){
         stat(entry->d_name, &statbuf);
-        if (!aflag && entry->d_name[0]=='.'){
+        if (!includeHidden && entry->d_name[0]=='.'){
             continue;
         }
-        if (lflag){
-            /* permissions bitmask*/
-            printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
-            printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
-            printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
-            printf( (statbuf.st_mode & S_IXUSR) ? "x" : "-");
-            printf( (statbuf.st_mode & S_IRGRP) ? "r" : "-");
-            printf( (statbuf.st_mode & S_IWGRP) ? "w" : "-");
-            printf( (statbuf.st_mode & S_IXGRP) ? "x" : "-");
-            printf( (statbuf.st_mode & S_IROTH) ? "r" : "-");
-            printf( (statbuf.st_mode & S_IWOTH) ? "w" : "-");
-            printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
-
-            printf("%4lu", statbuf.st_nlink);
-            if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
-                printf(" %-6.8s", pwd->pw_name);
-            }
-            if ((grp = getgrgid(statbuf.st_gid)) != NULL){
-                printf(" %-6.8s", grp->gr_name);
-            }
-
-            printf(" %9jd", (intmax_t)statbuf.st_size);
-            tm = localtime(&statbuf.st_mtime);
-            strftime(datestring, sizeof(datestring), "%b %d %H:%M",
-                    tm);
-
+        if (longOutput){
+            longOut(statbuf);
         }
-        printf(" %s %s\n", datestring, entry->d_name);
+        printf(" %s\n", entry->d_name);
     }
     closedir(directory);
+}
+
+int longOut(struct stat statbuf){
+    struct passwd *pwd;
+    struct group *grp;
+    struct tm *tm;
+    char datestring[256];
+
+    /* permissions bitmask*/
+    printf( (S_ISDIR(statbuf.st_mode)) ? "d" : "-");
+    printf( (statbuf.st_mode & S_IRUSR) ? "r" : "-");
+    printf( (statbuf.st_mode & S_IWUSR) ? "w" : "-");
+    printf( (statbuf.st_mode & S_IXUSR) ? "x" : "-");
+    printf( (statbuf.st_mode & S_IRGRP) ? "r" : "-");
+    printf( (statbuf.st_mode & S_IWGRP) ? "w" : "-");
+    printf( (statbuf.st_mode & S_IXGRP) ? "x" : "-");
+    printf( (statbuf.st_mode & S_IROTH) ? "r" : "-");
+    printf( (statbuf.st_mode & S_IWOTH) ? "w" : "-");
+    printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
+
+    printf("%4lu", statbuf.st_nlink);
+    if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
+        printf(" %-6.8s", pwd->pw_name);
+    }
+    if ((grp = getgrgid(statbuf.st_gid)) != NULL){
+        printf(" %-6.8s", grp->gr_name);
+    }
+
+    printf(" %9jd", (intmax_t)statbuf.st_size);
+    tm = localtime(&statbuf.st_mtime);
+    strftime(datestring, sizeof(datestring), "%b %d %H:%M", tm);
+    printf(" %s", datestring);
+    return 1;
 }
