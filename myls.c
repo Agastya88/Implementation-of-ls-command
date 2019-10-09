@@ -36,11 +36,7 @@ int main(int argc, char *argv[]){
         }
     }
 
-    //TODO proper handling of multiple non-option arguments
-    //TODO need to change below to a while loop i think...
-    if (optind < argc){
-        directory = opendir(argv[optind]);
-    } else{
+    if (optind >= argc){
         directory = opendir(".");
         currentdirflag = 1;
     }
@@ -49,11 +45,11 @@ int main(int argc, char *argv[]){
         if (!currentdirflag){
             directory = opendir(argv[optind]);
             if (stat(argv[optind], &statbuf) == 0){
-                if (!S_ISDIR(statbuf.st_mode) && currentdirflag == 0){
+                if (!S_ISDIR(statbuf.st_mode)){
                     if (longOutput){
                         longOut(statbuf);
                     }
-                    printf(" %s\n", argv[optind]);
+                    printf("%s\n", argv[optind]);
                     optind++;
                     continue;
                 }
@@ -70,7 +66,7 @@ int main(int argc, char *argv[]){
             if (longOutput){
                 longOut(statbuf);
             }
-            printf(" %s\n", entry->d_name);
+            printf("%s\n", entry->d_name);
         }
         currentdirflag = 0;
         optind++;
@@ -107,7 +103,7 @@ int longOut(struct stat statbuf){
     printf(" %9jd", (intmax_t)statbuf.st_size);
     tm = localtime(&statbuf.st_mtime);
     strftime(datestring, sizeof(datestring), "%b %d %H:%M", tm);
-    printf(" %s", datestring);
+    printf(" %s ", datestring);
     //TODO have return value be based on success or error
     return 1;
 }
