@@ -10,6 +10,7 @@
 #include <locale.h>
 #include <stdint.h>
 #include <langinfo.h>
+#include <errno.h>
 
 //TODO choose better names for longoutput flag and function
 int longOut(struct stat);
@@ -54,19 +55,25 @@ int main(int argc, char *argv[]){
                     continue;
                 }
             } else if (currentdirflag != 1){
-                exit (0);
+                (argv[optind]);
+                optind++;
+                continue;
             }
         }
 
         while ((entry = readdir(directory))!=NULL){
-            stat(entry->d_name, &statbuf);
-            if (!includeHidden && entry->d_name[0]=='.'){
-                continue;
+            if (stat(argv[optind], &statbuf) == 0){
+                if (!includeHidden && entry->d_name[0]=='.'){
+                    continue;
+                }
+                if (longOutput){
+                    longOut(statbuf);
+                }
+                printf("%s\n", entry->d_name);
+            } else{
+                perror("stat");
+                exit(EXIT_FAILURE);
             }
-            if (longOutput){
-                longOut(statbuf);
-            }
-            printf("%s\n", entry->d_name);
         }
         currentdirflag = 0;
         optind++;
@@ -95,9 +102,13 @@ int longOut(struct stat statbuf){
     printf("%4lu", statbuf.st_nlink);
     if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
         printf(" %-6.8s", pwd->pw_name);
+    } else{
+        perror("getpwuid");
     }
     if ((grp = getgrgid(statbuf.st_gid)) != NULL){
         printf(" %-6.8s", grp->gr_name);
+    } else{
+        perror("getpwuid");
     }
 
     printf(" %9jd", (intmax_t)statbuf.st_size);
