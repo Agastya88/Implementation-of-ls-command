@@ -55,14 +55,26 @@ int main(int argc, char *argv[]){
                     continue;
                 }
             } else if (currentdirflag != 1){
-                (argv[optind]);
+                perror(argv[optind]);
                 optind++;
                 continue;
             }
         }
 
         while ((entry = readdir(directory))!=NULL){
-            if (stat(argv[optind], &statbuf) == 0){
+            if (currentdirflag){
+                if (stat(entry->d_name, &statbuf) == 0){
+                    if (!includeHidden && entry->d_name[0]=='.'){
+                        continue;
+                    }
+                    if (longOutput){
+                        longOut(statbuf);
+                    }
+                    printf("%s\n", entry->d_name);
+
+                }
+            }
+            else if (stat(argv[optind], &statbuf) == 0){
                 if (!includeHidden && entry->d_name[0]=='.'){
                     continue;
                 }
@@ -70,7 +82,8 @@ int main(int argc, char *argv[]){
                     longOut(statbuf);
                 }
                 printf("%s\n", entry->d_name);
-            } else{
+            } 
+            else{
                 perror("stat");
                 exit(EXIT_FAILURE);
             }
