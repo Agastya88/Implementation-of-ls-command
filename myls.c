@@ -12,7 +12,6 @@
 #include <langinfo.h>
 #include <errno.h>
 
-//TODO choose better names for longoutput flag and function
 int longOut(struct stat);
 
 int main(int argc, char *argv[]){
@@ -46,6 +45,8 @@ int main(int argc, char *argv[]){
     if (optind < argc-1){
         severaldirs = 1;
     }
+
+    char *path;
     while (optind < argc || currentdirflag == 1){
         if (!currentdirflag){
             directory = opendir(argv[optind]);
@@ -60,7 +61,7 @@ int main(int argc, char *argv[]){
                 } else if (severaldirs){
                     printf("%s:\n", argv[optind]);
                 }
-            } else if (currentdirflag != 1){
+            } else {
                 perror(argv[optind]);
                 optind++;
                 continue;
@@ -69,18 +70,11 @@ int main(int argc, char *argv[]){
 
         while ((entry = readdir(directory))!=NULL){
             if (currentdirflag){
-                if (stat(entry->d_name, &statbuf) == 0){
-                    if (!includeHidden && entry->d_name[0]=='.'){
-                        continue;
-                    }
-                    if (longOutput){
-                        longOut(statbuf);
-                    }
-                    printf("%s\n", entry->d_name);
-
-                }
+                path = entry->d_name;
+            } else{
+                path = argv[optind];
             }
-            else if (stat(argv[optind], &statbuf) == 0){
+            if (stat(path, &statbuf) == 0){
                 if (!includeHidden && entry->d_name[0]=='.'){
                     continue;
                 }
@@ -88,8 +82,7 @@ int main(int argc, char *argv[]){
                     longOut(statbuf);
                 }
                 printf("%s\n", entry->d_name);
-            } 
-            else{
+            } else{
                 perror("stat");
                 exit(EXIT_FAILURE);
             }
@@ -98,9 +91,10 @@ int main(int argc, char *argv[]){
             printf("\n");
         }
         currentdirflag = 0;
+        closedir(directory);
         optind++;
     }
-    closedir(directory);
+    //closedir(directory);
 }
 
 int longOut(struct stat statbuf){
@@ -132,7 +126,6 @@ int longOut(struct stat statbuf){
     } else{
         perror("getpwuid");
     }
-
     printf(" %9jd", (intmax_t)statbuf.st_size);
     tm = localtime(&statbuf.st_mtime);
     strftime(datestring, sizeof(datestring), "%b %d %H:%M", tm);
