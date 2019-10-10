@@ -42,6 +42,10 @@ int main(int argc, char *argv[]){
         currentdirflag = 1;
     }
 
+    int severaldirs = 0;
+    if (optind < argc-1){
+        severaldirs = 1;
+    }
     while (optind < argc || currentdirflag == 1){
         if (!currentdirflag){
             directory = opendir(argv[optind]);
@@ -53,6 +57,8 @@ int main(int argc, char *argv[]){
                     printf("%s\n", argv[optind]);
                     optind++;
                     continue;
+                } else if (severaldirs){
+                    printf("\n%s:\n", argv[optind]);
                 }
             } else if (currentdirflag != 1){
                 perror(argv[optind]);
