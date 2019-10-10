@@ -58,7 +58,7 @@ int main(int argc, char *argv[]){
                     optind++;
                     continue;
                 } else if (severaldirs){
-                    printf("\n%s:\n", argv[optind]);
+                    printf("%s:\n", argv[optind]);
                 }
             } else if (currentdirflag != 1){
                 perror(argv[optind]);
@@ -93,6 +93,9 @@ int main(int argc, char *argv[]){
                 perror("stat");
                 exit(EXIT_FAILURE);
             }
+        }
+        if (severaldirs){
+            printf("\n");
         }
         currentdirflag = 0;
         optind++;
