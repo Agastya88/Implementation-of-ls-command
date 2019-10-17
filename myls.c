@@ -13,6 +13,7 @@
 #include <errno.h>
 
 int longOut(struct stat);
+int fileCheck(char *path, int longOutput, struct stat statbuf);
 
 int main(int argc, char *argv[]){
     DIR *directory;
@@ -47,24 +48,14 @@ int main(int argc, char *argv[]){
     }
 
     char *path;
-    while (optind < argc || currentdirflag == 1){
+    while (optind < argc || currentdirflag){
         if (!currentdirflag){
             directory = opendir(argv[optind]);
-            if (stat(argv[optind], &statbuf) == 0){
-                if (!S_ISDIR(statbuf.st_mode)){
-                    if (longOutput){
-                        longOut(statbuf);
-                    }
-                    printf("%s\n", argv[optind]);
-                    optind++;
-                    continue;
-                } else if (severaldirs){
-                    printf("%s:\n", argv[optind]);
-                }
-            } else {
-                perror(argv[optind]);
+            if (fileCheck(argv[optind], longOutput, statbuf)){
                 optind++;
                 continue;
+            } else if (severaldirs){
+                printf("%s:\n", argv[optind]);
             }
         }
 
@@ -94,7 +85,23 @@ int main(int argc, char *argv[]){
         closedir(directory);
         optind++;
     }
-    //closedir(directory);
+}
+
+int fileCheck(char *path, int longOutput, struct stat statbuf){
+    if (stat(path, &statbuf) == 0){
+        if (!S_ISDIR(statbuf.st_mode)){
+            if (longOutput){
+                longOut(statbuf);
+            }
+            printf("%s\n", path);
+            return 1;
+        } else {
+            return 0;
+        }
+    } else {
+        perror(path);
+        return 1;
+    }
 }
 
 int longOut(struct stat statbuf){
