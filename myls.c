@@ -12,7 +12,7 @@
 #include <langinfo.h>
 #include <errno.h>
 
-int longOut(struct stat);
+void longOut(struct stat);
 int fileCheck(char *path, int longOutput, struct stat statbuf);
 
 int main(int argc, char *argv[]){
@@ -50,6 +50,7 @@ int main(int argc, char *argv[]){
     char *path;
     while (optind < argc || currentdirflag){
         if (!currentdirflag){
+            path = argv[optind];
             directory = opendir(argv[optind]);
             if (fileCheck(argv[optind], longOutput, statbuf)){
                 optind++;
@@ -62,9 +63,7 @@ int main(int argc, char *argv[]){
         while ((entry = readdir(directory))!=NULL){
             if (currentdirflag){
                 path = entry->d_name;
-            } else{
-                path = argv[optind];
-            }
+            } 
             if (stat(path, &statbuf) == 0){
                 if (!includeHidden && entry->d_name[0]=='.'){
                     continue;
@@ -104,7 +103,7 @@ int fileCheck(char *path, int longOutput, struct stat statbuf){
     }
 }
 
-int longOut(struct stat statbuf){
+void longOut(struct stat statbuf){
     struct passwd *pwd;
     struct group *grp;
     struct tm *tm;
@@ -137,6 +136,4 @@ int longOut(struct stat statbuf){
     tm = localtime(&statbuf.st_mtime);
     strftime(datestring, sizeof(datestring), "%b %d %H:%M", tm);
     printf(" %s ", datestring);
-    //TODO have return value be based on success or error
-    return 1;
 }
