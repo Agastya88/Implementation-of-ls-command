@@ -13,13 +13,13 @@
 #include <errno.h>
 
 void longOut(struct stat);
-int fileCheck(char *path, int longOutput, struct stat statbuf);
 
-int main(int argc, char *argv[]){
+int main(int argc, char *argv[])
+{
     DIR *directory;
     struct dirent *entry;
-    int includeHidden = 0;
-    int longOutput = 0;
+    int includehidden = 0;
+    int longoutput = 0;
     int currentdirflag = 0;
     struct stat statbuf;
 
@@ -27,12 +27,13 @@ int main(int argc, char *argv[]){
     while ((option=getopt(argc, argv, "al")) != -1){
         switch (option) {
             case 'a':
-                includeHidden = 1;
+                includehidden = 1;
                 break;
             case 'l':
-                longOutput = 1;
+                longoutput = 1;
                 break;
             default:
+                printf("Invalid option\n");
                 break;
         }
     }
@@ -49,32 +50,44 @@ int main(int argc, char *argv[]){
 
     char *path;
     while (optind < argc || currentdirflag){
+
         if (!currentdirflag){
             path = argv[optind];
             directory = opendir(argv[optind]);
-            if (fileCheck(argv[optind], longOutput, statbuf)){
+            if (stat(path, &statbuf) == 0){
+                if (!S_ISDIR(statbuf.st_mode))
+                {
+                    if (longoutput)
+                    {
+                        longOut(statbuf);
+                    }
+                    printf("%s\n", path);
+                    optind++;
+                    continue;
+                } else if (severaldirs) {
+                    printf("%s:\n", argv[optind]);
+                }
+            } else {
+                perror(path);
                 optind++;
                 continue;
-            } else if (severaldirs){
-                printf("%s:\n", argv[optind]);
-            }
+            }       
         }
 
         while ((entry = readdir(directory))!=NULL){
             if (currentdirflag){
                 path = entry->d_name;
             } 
+            if (!includehidden && entry->d_name[0]=='.'){
+                continue;
+            }
             if (stat(path, &statbuf) == 0){
-                if (!includeHidden && entry->d_name[0]=='.'){
-                    continue;
-                }
-                if (longOutput){
+                if (longoutput){
                     longOut(statbuf);
                 }
                 printf("%s\n", entry->d_name);
             } else{
                 perror("stat");
-                exit(EXIT_FAILURE);
             }
         }
         if (severaldirs){
@@ -86,24 +99,8 @@ int main(int argc, char *argv[]){
     }
 }
 
-int fileCheck(char *path, int longOutput, struct stat statbuf){
-    if (stat(path, &statbuf) == 0){
-        if (!S_ISDIR(statbuf.st_mode)){
-            if (longOutput){
-                longOut(statbuf);
-            }
-            printf("%s\n", path);
-            return 1;
-        } else {
-            return 0;
-        }
-    } else {
-        perror(path);
-        return 1;
-    }
-}
-
-void longOut(struct stat statbuf){
+void longOut(struct stat statbuf)
+{
     struct passwd *pwd;
     struct group *grp;
     struct tm *tm;
@@ -125,12 +122,12 @@ void longOut(struct stat statbuf){
     if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
         printf(" %-6.8s", pwd->pw_name);
     } else{
-        perror("getpwuid");
+        printf("%d", statbuf.st_uid);
     }
     if ((grp = getgrgid(statbuf.st_gid)) != NULL){
         printf(" %-6.8s", grp->gr_name);
     } else{
-        perror("getpwuid");
+        printf("%d", statbuf.st_gid);
     }
     printf(" %9jd", (intmax_t)statbuf.st_size);
     tm = localtime(&statbuf.st_mtime);
