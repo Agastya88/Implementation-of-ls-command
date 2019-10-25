@@ -1,7 +1,3 @@
 myls - by sammy and agastya
 
-Known bugs
-==========
-the -l flag does not currently work when given a file name
-
 Stack Overflow Code Used: https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file

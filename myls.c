@@ -1,4 +1,5 @@
 #include <getopt.h>
+#include <string.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <dirent.h>
@@ -48,11 +49,11 @@ int main(int argc, char *argv[])
         severaldirs = 1;
     }
 
-    char *path;
+    char path[PATH_MAX];
     while (optind < argc || currentdirflag){
-
-        if (!currentdirflag){
-            path = argv[optind];
+        if (!currentdirflag)
+        {
+            strcpy(path, argv[optind]);
             directory = opendir(argv[optind]);
             if (stat(path, &statbuf) == 0){
                 if (!S_ISDIR(statbuf.st_mode))
@@ -74,15 +75,21 @@ int main(int argc, char *argv[])
             }       
         }
 
-        while ((entry = readdir(directory))!=NULL){
-            if (currentdirflag){
-                path = entry->d_name;
-            } 
-            if (!includehidden && entry->d_name[0]=='.'){
+        while ((entry = readdir(directory))!=NULL)
+        {
+            if (!currentdirflag){
+                strcpy(path, argv[optind]);
+                strcat(path, "/");
+            }
+            strcat(path, entry->d_name);
+            if (!includehidden && entry->d_name[0]=='.')
+            {
                 continue;
             }
-            if (stat(path, &statbuf) == 0){
-                if (longoutput){
+            if (stat(path, &statbuf) == 0)
+            {
+                if (longoutput)
+                {
                     longOut(statbuf);
                 }
                 printf("%s\n", entry->d_name);
@@ -90,7 +97,8 @@ int main(int argc, char *argv[])
                 perror("stat");
             }
         }
-        if (severaldirs){
+        if (severaldirs)
+        {
             printf("\n");
         }
         currentdirflag = 0;
