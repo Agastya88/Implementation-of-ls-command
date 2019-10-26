@@ -39,6 +39,7 @@ int main(int argc, char *argv[])
         }
     }
 
+    char path[PATH_MAX];
     if (optind >= argc){
         directory = opendir(".");
         currentdirflag = 1;
@@ -49,17 +50,15 @@ int main(int argc, char *argv[])
         severaldirs = 1;
     }
 
-    char path[PATH_MAX];
     while (optind < argc || currentdirflag){
         if (!currentdirflag)
         {
             strcpy(path, argv[optind]);
-            directory = opendir(argv[optind]);
+            directory = opendir(path);
             if (stat(path, &statbuf) == 0){
                 if (!S_ISDIR(statbuf.st_mode))
                 {
-                    if (longoutput)
-                    {
+                    if (longoutput) {
                         longOut(statbuf);
                     }
                     printf("%s\n", path);
@@ -77,28 +76,28 @@ int main(int argc, char *argv[])
 
         while ((entry = readdir(directory))!=NULL)
         {
-            if (!currentdirflag){
+            if (!currentdirflag)
+            {
                 strcpy(path, argv[optind]);
                 strcat(path, "/");
+            } else {
+                strcpy(path, "./");
             }
             strcat(path, entry->d_name);
-            if (!includehidden && entry->d_name[0]=='.')
-            {
+            if (!includehidden && entry->d_name[0]=='.') {
                 continue;
             }
             if (stat(path, &statbuf) == 0)
             {
-                if (longoutput)
-                {
+                if (longoutput) {
                     longOut(statbuf);
                 }
                 printf("%s\n", entry->d_name);
-            } else{
+            } else {
                 perror("stat");
             }
         }
-        if (severaldirs)
-        {
+        if (severaldirs) {
             printf("\n");
         }
         currentdirflag = 0;
@@ -127,14 +126,16 @@ void longOut(struct stat statbuf)
     printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
 
     printf("%4lu", statbuf.st_nlink);
-    if ((pwd = getpwuid(statbuf.st_uid)) != NULL){
+    if ((pwd = getpwuid(statbuf.st_uid)) != NULL)
+    {
         printf(" %-6.8s", pwd->pw_name);
-    } else{
+    } else {
         printf("%d", statbuf.st_uid);
     }
-    if ((grp = getgrgid(statbuf.st_gid)) != NULL){
+    if ((grp = getgrgid(statbuf.st_gid)) != NULL)
+    {
         printf(" %-6.8s", grp->gr_name);
-    } else{
+    } else {
         printf("%d", statbuf.st_gid);
     }
     printf(" %9jd", (intmax_t)statbuf.st_size);
