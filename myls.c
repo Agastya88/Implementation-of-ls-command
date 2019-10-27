@@ -41,7 +41,10 @@ int main(int argc, char *argv[])
 
     char path[PATH_MAX];
     if (optind >= argc){
-        directory = opendir(".");
+        if ((directory = opendir(".")) == NULL){
+            perror("failed to open current dir");
+            exit(1);
+        }
         currentdirflag = 1;
     }
 
@@ -54,7 +57,6 @@ int main(int argc, char *argv[])
         if (!currentdirflag)
         {
             strcpy(path, argv[optind]);
-            directory = opendir(path);
             if (stat(path, &statbuf) == 0){
                 if (!S_ISDIR(statbuf.st_mode))
                 {
@@ -72,6 +74,11 @@ int main(int argc, char *argv[])
                 optind++;
                 continue;
             }       
+            if ((directory = opendir(path)) == NULL)
+            {
+                perror("failed to open directory");
+                continue;
+            }
         }
 
         while ((entry = readdir(directory))!=NULL)
