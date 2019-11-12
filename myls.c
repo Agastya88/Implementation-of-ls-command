@@ -15,8 +15,7 @@
 
 void longOut(struct stat);
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
     DIR *directory;
     struct dirent *entry;
     int includehidden = 0;
@@ -25,7 +24,7 @@ int main(int argc, char *argv[])
     struct stat statbuf;
 
     int option;
-    while ((option=getopt(argc, argv, "al")) != -1){
+    while ((option=getopt(argc, argv, "al")) != -1) {
         switch (option) {
             case 'a':
                 includehidden = 1;
@@ -40,26 +39,25 @@ int main(int argc, char *argv[])
     }
 
     char path[PATH_MAX];
-    if (optind >= argc){
-        if ((directory = opendir(".")) == NULL){
-            perror("failed to open current dir");
+    if (optind >= argc) {
+        if ((directory = opendir(".")) == NULL) {
+            perror(".");
             exit(1);
         }
         currentdirflag = 1;
     }
 
     int severaldirs = 0;
-    if (optind < argc-1){
+    if (optind < argc-1) {
         severaldirs = 1;
     }
 
-    while (optind < argc || currentdirflag){
-        if (!currentdirflag)
-        {
+    while (optind < argc || currentdirflag) {
+        if (!currentdirflag) {
+            //create path for given argument
             strcpy(path, argv[optind]);
-            if (stat(path, &statbuf) == 0){
-                if (!S_ISDIR(statbuf.st_mode))
-                {
+            if (stat(path, &statbuf) == 0) {
+                if (!S_ISDIR(statbuf.st_mode)) {
                     if (longoutput) {
                         longOut(statbuf);
                     }
@@ -73,35 +71,33 @@ int main(int argc, char *argv[])
                 perror(path);
                 optind++;
                 continue;
-            }       
-            if ((directory = opendir(path)) == NULL)
-            {
-                perror("failed to open directory");
+            }
+            if ((directory = opendir(path)) == NULL) {
+                perror(path);
                 continue;
             }
         }
 
-        while ((entry = readdir(directory))!=NULL)
-        {
-            if (!currentdirflag)
-            {
+        while ((entry = readdir(directory))!=NULL) {
+            /* contruct path string */
+            if (!currentdirflag) {
                 strcpy(path, argv[optind]);
                 strcat(path, "/");
             } else {
                 strcpy(path, "./");
             }
             strcat(path, entry->d_name);
+
             if (!includehidden && entry->d_name[0]=='.') {
                 continue;
             }
-            if (stat(path, &statbuf) == 0)
-            {
+            if (stat(path, &statbuf) == 0) {
                 if (longoutput) {
                     longOut(statbuf);
                 }
                 printf("%s\n", entry->d_name);
             } else {
-                perror("stat");
+                perror(path);
             }
         }
         if (severaldirs) {
@@ -113,8 +109,7 @@ int main(int argc, char *argv[])
     }
 }
 
-void longOut(struct stat statbuf)
-{
+void longOut(struct stat statbuf) {
     struct passwd *pwd;
     struct group *grp;
     struct tm *tm;
@@ -133,14 +128,12 @@ void longOut(struct stat statbuf)
     printf( (statbuf.st_mode & S_IXOTH) ? "x" : "-");
 
     printf("%4lu", statbuf.st_nlink);
-    if ((pwd = getpwuid(statbuf.st_uid)) != NULL)
-    {
+    if ((pwd = getpwuid(statbuf.st_uid)) != NULL) {
         printf(" %-6.8s", pwd->pw_name);
     } else {
         printf("%d", statbuf.st_uid);
     }
-    if ((grp = getgrgid(statbuf.st_gid)) != NULL)
-    {
+    if ((grp = getgrgid(statbuf.st_gid)) != NULL) {
         printf(" %-6.8s", grp->gr_name);
     } else {
         printf("%d", statbuf.st_gid);
