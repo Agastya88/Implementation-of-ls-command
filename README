@@ -1,3 +1,7 @@
-myls - by sammy and agastya
+Authors:
+Sammy Van Cleve
+Agastya Ahluwalia
+
+Program to replicate the "ls" command on the command line.
 
 Stack Overflow Code Used: https://stackoverflow.com/questions/4553012/checking-if-a-file-is-a-directory-or-just-a-file
